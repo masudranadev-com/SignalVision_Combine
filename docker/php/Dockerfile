@@ -58,6 +58,10 @@ WORKDIR /var/www
 RUN addgroup -g 1000 www \
     && adduser -u 1000 -G www -s /bin/sh -D www
 
+# Create log directories
+RUN mkdir -p /var/log/php /var/log/scheduler \
+    && chown -R www:www /var/log/php /var/log/scheduler
+
 # Set proper permissions
 RUN chown -R www:www /var/www
 
