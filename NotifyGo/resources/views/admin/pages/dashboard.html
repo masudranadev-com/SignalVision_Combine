@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SignalNode Admin</title>
+    <link rel="stylesheet" href="/resources/css/admin.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>SignalNode</h1>
+                <p>Admin Panel</p>
+            </div>
+            <div id="loginError"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">
+                Default credentials: admin / admin123
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <nav class="navbar">
+            <div class="navbar-brand">SignalNode</div>
+            <div class="navbar-menu">
+                <a href="/admin/dashboard" class="active">Dashboard</a>
+                <a href="/admin/trades">Trades</a>
+                <a href="/admin/settings">Settings</a>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span>Welcome, <strong id="userDisplay">Admin</strong></span>
+                </div>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Trades</div>
+                    <div class="stat-value" id="totalTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Binance Trades</div>
+                    <div class="stat-value" id="binanceTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bybit Trades</div>
+                    <div class="stat-value" id="bybitTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Running Trades</div>
+                    <div class="stat-value" id="runningTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Waiting Trades</div>
+                    <div class="stat-value" id="waitingTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tracked Prices</div>
+                    <div class="stat-value" id="trackedPrices">0</div>
+                </div>
+            </div>
+
+            <!-- Trades Table -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Active Trades</h2>
+                    <button class="btn-primary" onclick="openAddTradeModal()">+ Add Trade</button>
+                </div>
+                <div id="tradesTableContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Trade Modal -->
+    <div id="addTradeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Trade</h3>
+                <button class="btn-close" onclick="closeAddTradeModal()">&times;</button>
+            </div>
+            <form id="addTradeForm">
+                <div class="form-group">
+                    <label>Exchange</label>
+                    <select id="tradeMarket">
+                        <option value="binance">Binance</option>
+                        <option value="bybit">Bybit</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pair</label>
+                        <input type="text" id="tradePair" placeholder="BTCUSDT" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <select id="tradeMode">
+                            <option value="LONG">LONG</option>
+                            <option value="SHORT">SHORT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Entry Price</label>
+                        <input type="number" id="tradeEntry" step="0.01" placeholder="95000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Loss</label>
+                        <input type="number" id="tradeSL" step="0.01" placeholder="94000" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Take Profit 1</label>
+                        <input type="number" id="tradeTP1" step="0.01" placeholder="96000">
+                    </div>
+                    <div class="form-group">
+                        <label>Take Profit 2</label>
+                        <input type="number" id="tradeTP2" step="0.01" placeholder="97000">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Add Trade</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/resources/js/admin.js"></script>
+</body>
+</html>

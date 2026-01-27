@@ -1,0 +1,82 @@
+# =============================================================================
+# Docker Ignore File
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel vendor (will be installed in container)
+*/vendor
+*/node_modules
+
+# Laravel Cache
+*/bootstrap/cache/*
+!*/bootstrap/cache/.gitignore
+
+# Laravel Storage (keep structure, ignore contents)
+*/storage/app/*
+!*/storage/app/.gitignore
+*/storage/framework/cache/*
+!*/storage/framework/cache/.gitignore
+*/storage/framework/sessions/*
+!*/storage/framework/sessions/.gitignore
+*/storage/framework/views/*
+!*/storage/framework/views/.gitignore
+*/storage/logs/*
+!*/storage/logs/.gitignore
+
+# Environment files (will be mounted)
+*/.env
+*/.env.*
+!*/.env.example
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+.phpunit.result.cache
+
+# Build artifacts
+*/public/hot
+*/public/storage
+*/public/build
+
+# Documentation
+*.md
+!README.md
+
+# Docker files in subdirectories
+*/Dockerfile
+*/docker-compose*.yml
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# WordPress specific
+Wordpress/wp-content/cache/*
+Wordpress/wp-content/uploads/*
+!Wordpress/wp-content/uploads/.gitkeep
+Wordpress/error_log
+Wordpress/cron.log
+
+# Go binaries
+NotifyGo/signalnode
+NotifyGo/signalmanager-node
+NotifyGo/*.log

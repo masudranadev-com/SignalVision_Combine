@@ -1,0 +1,4 @@
+# Place your SSL certificates here:
+# - certificate.crt
+# - private.key
+# - ca_bundle.crt (if applicable)

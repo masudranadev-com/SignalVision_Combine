@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trades - SignalNode Admin</title>
+    <link rel="stylesheet" href="/resources/css/admin.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>SignalNode</h1>
+                <p>Admin Panel</p>
+            </div>
+            <div id="loginError"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">
+                Default credentials: admin / admin123
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <nav class="navbar">
+            <div class="navbar-brand">SignalNode</div>
+            <div class="navbar-menu">
+                <a href="/admin/dashboard">Dashboard</a>
+                <a href="/admin/trades" class="active">Trades</a>
+                <a href="/admin/settings">Settings</a>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span>Welcome, <strong id="userDisplay">Admin</strong></span>
+                </div>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1 class="mb-3">Trade Management</h1>
+
+            <!-- Filters -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">Filters</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Exchange</label>
+                            <select id="filterExchange" onchange="applyFilters()">
+                                <option value="">All Exchanges</option>
+                                <option value="binance">Binance</option>
+                                <option value="bybit">Bybit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="filterStatus" onchange="applyFilters()">
+                                <option value="">All Status</option>
+                                <option value="waiting">Waiting</option>
+                                <option value="running">Running</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mode</label>
+                            <select id="filterMode" onchange="applyFilters()">
+                                <option value="">All Modes</option>
+                                <option value="LONG">LONG</option>
+                                <option value="SHORT">SHORT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Search Pair</label>
+                            <input type="text" id="searchPair" placeholder="BTCUSDT" oninput="applyFilters()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trades Table -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">All Trades (<span id="tradeCount">0</span>)</h2>
+                    <button class="btn-primary" onclick="openAddTradeModal()">+ Add Trade</button>
+                </div>
+                <div id="tradesTableContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Trade Modal -->
+    <div id="addTradeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Trade</h3>
+                <button class="btn-close" onclick="closeAddTradeModal()">&times;</button>
+            </div>
+            <form id="addTradeForm">
+                <div class="form-group">
+                    <label>Exchange</label>
+                    <select id="tradeMarket">
+                        <option value="binance">Binance</option>
+                        <option value="bybit">Bybit</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pair</label>
+                        <input type="text" id="tradePair" placeholder="BTCUSDT" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <select id="tradeMode">
+                            <option value="LONG">LONG</option>
+                            <option value="SHORT">SHORT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Entry Price</label>
+                        <input type="number" id="tradeEntry" step="0.01" placeholder="95000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Loss</label>
+                        <input type="number" id="tradeSL" step="0.01" placeholder="94000" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Take Profit 1</label>
+                        <input type="number" id="tradeTP1" step="0.01" placeholder="96000">
+                    </div>
+                    <div class="form-group">
+                        <label>Take Profit 2</label>
+                        <input type="number" id="tradeTP2" step="0.01" placeholder="97000">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Add Trade</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/resources/js/admin.js"></script>
+    <script>
+        // Filter functionality
+        let allTrades = [];
+        let filteredTrades = [];
+
+        function applyFilters() {
+            const exchange = document.getElementById('filterExchange').value;
+            const status = document.getElementById('filterStatus').value;
+            const mode = document.getElementById('filterMode').value;
+            const search = document.getElementById('searchPair').value.toUpperCase();
+
+            filteredTrades = allTrades.filter(trade => {
+                if (exchange && trade.market !== exchange) return false;
+                if (status && trade.status !== status) return false;
+                if (mode && trade.mod !== mode) return false;
+                if (search && !trade.pair.includes(search)) return false;
+                return true;
+            });
+
+            trades = filteredTrades;
+            renderTrades();
+            document.getElementById('tradeCount').textContent = filteredTrades.length;
+        }
+
+        // Override loadData to store all trades
+        const originalLoadData = loadData;
+        loadData = async function() {
+            await originalLoadData();
+            allTrades = [...trades];
+            applyFilters();
+        };
+    </script>
+</body>
+</html>

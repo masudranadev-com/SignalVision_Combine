@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SignalNode Admin</title>
+    <link rel="stylesheet" href="/resources/css/admin.css">
+</head>
+<body>
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>SignalNode</h1>
+                <p>Admin Panel</p>
+            </div>
+            <div id="loginError"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">
+                Default credentials: admin / admin123
+            </p>
+        </div>
+    </div>
+
+    <script src="/resources/js/admin.js"></script>
+</body>
+</html>

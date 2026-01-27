@@ -1,0 +1,357 @@
+services:
+  # =============================================================================
+  # DATABASE SERVICES
+  # =============================================================================
+
+  mysql:
+    image: mysql:8.0
+    container_name: signalvision_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_USER: ${MYSQL_USER:-signalvision}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-signalvision_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - signalvision_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: signalvision_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - signalvision_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # PHP-FPM SERVICES (Laravel Apps)
+  # =============================================================================
+
+  admin-app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        - APP_ENV=production
+    container_name: signalvision_admin
+    restart: unless-stopped
+    working_dir: /var/www/admin
+    volumes:
+      - ./Admin:/var/www/admin
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Admin
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=admin
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  manager-app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        - APP_ENV=production
+    container_name: signalvision_manager
+    restart: unless-stopped
+    working_dir: /var/www/manager
+    volumes:
+      - ./Manager:/var/www/manager
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Manager
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=manager
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  trader-app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        - APP_ENV=production
+    container_name: signalvision_trader
+    restart: unless-stopped
+    working_dir: /var/www/trader
+    volumes:
+      - ./Trader:/var/www/trader
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Trader
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=trader
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  wordpress-app:
+    image: wordpress:php8.2-fpm
+    container_name: signalvision_wordpress
+    restart: unless-stopped
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_NAME=signalvision
+      - WORDPRESS_DB_USER=${MYSQL_USER:-signalvision}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  # =============================================================================
+  # QUEUE WORKERS (Laravel Horizon)
+  # =============================================================================
+
+  manager-horizon:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: signalvision_manager_horizon
+    restart: unless-stopped
+    working_dir: /var/www/manager
+    command: php artisan horizon
+    volumes:
+      - ./Manager:/var/www/manager
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Manager
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=manager
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  trader-horizon:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: signalvision_trader_horizon
+    restart: unless-stopped
+    working_dir: /var/www/trader
+    command: php artisan horizon
+    volumes:
+      - ./Trader:/var/www/trader
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Trader
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=trader
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  # =============================================================================
+  # WEBSOCKET SERVER (Laravel Reverb for Manager)
+  # =============================================================================
+
+  manager-reverb:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: signalvision_manager_reverb
+    restart: unless-stopped
+    working_dir: /var/www/manager
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Manager:/var/www/manager
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_NAME=Manager
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=manager
+      - DB_USERNAME=${MYSQL_USER:-signalvision}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-signalvision_pass}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REVERB_SERVER_HOST=0.0.0.0
+      - REVERB_SERVER_PORT=8080
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+  # =============================================================================
+  # GO SERVICE (NotifyGo - No Database)
+  # =============================================================================
+
+  notifygo:
+    build:
+      context: ./NotifyGo
+      dockerfile: ../docker/go/Dockerfile
+    container_name: signalvision_notifygo
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GIN_MODE=release
+    networks:
+      - signalvision_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # =============================================================================
+  # NGINX WEB SERVER
+  # =============================================================================
+
+  nginx:
+    image: nginx:alpine
+    container_name: signalvision_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Admin:/var/www/admin:ro
+      - ./Manager:/var/www/manager:ro
+      - ./Trader:/var/www/trader:ro
+      - wordpress_data:/var/www/html:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - admin-app
+      - manager-app
+      - trader-app
+      - wordpress-app
+      - notifygo
+    networks:
+      - signalvision_network
+
+  # =============================================================================
+  # SCHEDULER (Laravel Scheduler for all apps)
+  # =============================================================================
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: signalvision_scheduler
+    restart: unless-stopped
+    volumes:
+      - ./Admin:/var/www/admin
+      - ./Manager:/var/www/manager
+      - ./Trader:/var/www/trader
+      - ./docker/scheduler/run-scheduler.sh:/usr/local/bin/run-scheduler.sh:ro
+    command: /bin/sh /usr/local/bin/run-scheduler.sh
+    environment:
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - signalvision_network
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  signalvision_network:
+    driver: bridge
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  wordpress_data:
+    driver: local

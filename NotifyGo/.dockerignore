@@ -1,0 +1,45 @@
+# Binaries
+signalnode
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output
+*.out
+
+# Logs
+*.log
+logs/
+trades.log
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+README.md
+DEPLOYMENT.md
+
+# Dependencies
+vendor/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Development files
+node_modules/
