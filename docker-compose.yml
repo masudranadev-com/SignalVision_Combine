@@ -270,7 +270,7 @@ services:
     container_name: signalvision_notifygo
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8004:8000"
     environment:
       - GIN_MODE=release
     networks:
