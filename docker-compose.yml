@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -235,7 +235,7 @@ services:
     working_dir: /var/www/manager
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
     ports:
-      - "8080:8080"
+      - "8085:8080"
     volumes:
       - ./Manager:/var/www/manager
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
@@ -290,11 +290,11 @@ services:
     container_name: signalvision_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "8001:8001"
-      - "8002:8002"
-      - "8003:8003"
+      - "8088:80"
+      - "8443:443"
+      - "8091:8001"
+      - "8092:8002"
+      - "8093:8003"
     volumes:
       - ./Admin:/var/www/admin:ro
       - ./Manager:/var/www/manager:ro
