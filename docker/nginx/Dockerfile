@@ -16,9 +16,6 @@ RUN rm -f /etc/nginx/ssl/.gitkeep 2>/dev/null || true
 # Create log directory
 RUN mkdir -p /var/log/nginx
 
-# Validate nginx configuration
-RUN nginx -t
-
 EXPOSE 80 443 8001 8002 8003
 
 CMD ["nginx", "-g", "daemon off;"]
