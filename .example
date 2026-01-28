@@ -1,0 +1,213 @@
+# =============================================================================
+# SignalVision - Docker Environment Configuration
+# =============================================================================
+# This is the master .env file for docker-compose
+# =============================================================================
+
+# =============================================================================
+# ENVIRONMENT SETTINGS
+# =============================================================================
+APP_ENV=local
+APP_DEBUG=true
+GIN_MODE=debug
+
+# Your Public IP
+PUBLIC_IP=76.13.13.232
+
+# =============================================================================
+# MYSQL DATABASE CONFIGURATION
+# =============================================================================
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_USER=signalvision
+MYSQL_PASSWORD=signalvision_pass
+
+# Individual Database Credentials
+ADMIN_DB_DATABASE=admin
+ADMIN_DB_USERNAME=admin
+ADMIN_DB_PASSWORD=Q1m0DeTvFbmpqKgy2gyE
+
+MANAGER_DB_DATABASE=manager
+MANAGER_DB_USERNAME=manager
+MANAGER_DB_PASSWORD=Ftpb4FT2sBT2iteXvFC1
+
+TRADER_DB_DATABASE=trader
+TRADER_DB_USERNAME=trader
+TRADER_DB_PASSWORD=9qZbitn7ww1xZWH05mNX
+
+# =============================================================================
+# REDIS CONFIGURATION
+# =============================================================================
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_CLIENT=predis
+
+# =============================================================================
+# LARAVEL APP KEYS
+# =============================================================================
+ADMIN_APP_KEY=base64:h7MVDRvQIOyzmXwlmzq8Kj78HoVD6shW7g3q/mjkyHo=
+MANAGER_APP_KEY=base64:ydFsSQBAW4CBiVpzzQS3+N7J5i0Ah/Tx0khLp0A1a/Q=
+TRADER_APP_KEY=base64:PIzC7S7ePke4AuXCd3riyAQbt/gajqNdGL2u8sV259o=
+
+# =============================================================================
+# APPLICATION URLS (Docker - using ports)
+# =============================================================================
+ADMIN_URL=http://76.13.13.232:8091
+MANAGER_URL=http://76.13.13.232:8092
+TRADER_URL=http://76.13.13.232:8093
+WORDPRESS_URL=http://76.13.13.232:8088
+NOTIFYGO_URL=http://76.13.13.232:8004
+
+# Production URLs (with domains)
+# ADMIN_URL=https://admin.signalvision.ai
+# MANAGER_URL=https://manager.signalvision.ai
+# TRADER_URL=https://trader.signalvision.ai
+# WORDPRESS_URL=https://signalvision.ai
+# NOTIFYGO_URL=https://node.signalvision.ai
+
+# =============================================================================
+# API ENDPOINTS
+# =============================================================================
+MANAGER_API_END_POINT=http://76.13.13.232:8092
+CRYPTO_API_END_POINT=http://76.13.13.232:8093
+NODE_SERVER_API_END_POINT=http://76.13.13.232:8004
+SIGNAL_MANAGEMENT_END_POINT=http://76.13.13.232:8092
+SHOT_API_END_POINT=http://76.13.13.232:8093
+
+# API Secret (shared between services)
+API_SECRET=TRT56WTWRT
+
+# =============================================================================
+# REVERB (WEBSOCKET) CONFIGURATION
+# =============================================================================
+REVERB_APP_ID=6565434543
+REVERB_APP_KEY=GDTR565RET
+REVERB_APP_SECRET=HJDT6545GDY
+
+# Server-side Reverb settings
+REVERB_SERVER_HOST=0.0.0.0
+REVERB_SERVER_PORT=8080
+
+# Client-side Reverb settings (external access)
+REVERB_HOST=76.13.13.232
+REVERB_PORT=8085
+REVERB_SCHEME=http
+
+# Vite/Frontend Reverb settings
+VITE_REVERB_APP_KEY=GDTR565RET
+VITE_REVERB_HOST=76.13.13.232
+VITE_REVERB_PORT=8085
+VITE_REVERB_SCHEME=http
+
+# =============================================================================
+# TELEGRAM BOT CONFIGURATION
+# =============================================================================
+TELEGRAM_BOT_TOKEN=7898051144:AAEQPhfIGOJ7LnDOqMTJxf6MW-AEVmyKzCM
+TELEGRAM_WEBHOOK_URL=http://76.13.13.232:8092/telegram-message-webhook
+TELEGRAM_VERIFY_SSL=false
+SUPPORT_BOT_TOKEN=7898051144:AAEQPhfIGOJ7LnDOqMTJxf6MW-AEVmyKzCM
+TRADER_TELEGRAM_BOT_TOKEN=7400804641:AAFASjP27ZPr3PnPzZuN-Z9UQRaw2lPpnz0
+
+# =============================================================================
+# OPENAI / AI CONFIGURATION
+# =============================================================================
+OPENAI_API_KEY=
+DEEPEEK_API_KEY=
+
+# =============================================================================
+# MAIL CONFIGURATION
+# =============================================================================
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=hello@signalvision.ai
+MAIL_FROM_NAME=SignalVision
+
+# =============================================================================
+# CACHE, QUEUE & SESSION (Redis for production)
+# =============================================================================
+CACHE_DRIVER=redis
+CACHE_PREFIX=signalvision_
+QUEUE_CONNECTION=redis
+QUEUE_FAILED_DRIVER=database
+SESSION_DRIVER=redis
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+BROADCAST_DRIVER=reverb
+BROADCAST_CONNECTION=reverb
+
+# =============================================================================
+# EXCHANGE API CONFIGURATION
+# =============================================================================
+# Bybit Configuration
+BYBIT_TESTNET=false
+BYBIT_API_URL=https://api.bybit.com
+BYBIT_TESTNET_API_URL=https://api-testnet.bybit.com
+
+# Binance Configuration
+BINANCE_TESTNET=false
+BINANCE_API_URL=https://fapi.binance.com
+BINANCE_TESTNET_API_URL=https://testnet.binancefuture.com
+
+# =============================================================================
+# PROXY SETTINGS (for geo-blocked regions)
+# =============================================================================
+USE_PROXY=false
+PROXY_SELECTION_STRATEGY=random
+
+# =============================================================================
+# PRODUCT IDS
+# =============================================================================
+SIGNALSHOT_PRODUCT_ID=1021
+SIGNALMANAGER_PRODUCT_ID=554
+
+# =============================================================================
+# N8N WEBHOOK URLS
+# =============================================================================
+N8N_NEW_TICKET_WEBHOOK_URL=https://n8n.srv932656.hstgr.cloud/webhook/new-ticket
+N8N_ADMIN_REPLY_WEBHOOK_URL=https://n8n.srv932656.hstgr.cloud/webhook/admin-reply
+N8N_USER_REPLY_WEBHOOK_URL=https://n8n.srv932656.hstgr.cloud/webhook/user-reply
+
+# =============================================================================
+# WORDPRESS CONFIGURATION
+# =============================================================================
+WORDPRESS_DB_HOST=mysql
+WORDPRESS_DB_NAME=signalvision
+WORDPRESS_DB_USER=signalvision
+WORDPRESS_DB_PASSWORD=signalvision_pass
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+LOG_CHANNEL=daily
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+LOG_DAILY_DAYS=30
+
+# =============================================================================
+# AWS (Optional)
+# =============================================================================
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+# =============================================================================
+# SERVER INFO
+# =============================================================================
+SERVER_IP=76.13.13.232
+
+# =============================================================================
+# DATABASE PERFORMANCE
+# =============================================================================
+DB_PERSISTENT=true
+DB_TIMEOUT=30
+
+# =============================================================================
+# FREE TIER LIMITS
+# =============================================================================
+FREE_SIGNAL_LIMIT=10
