@@ -388,18 +388,6 @@ services:
     networks:
       - signalvision_network
 
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: signalvision_mailpit
-    restart: unless-stopped
-    profiles:
-      - dev
-    ports:
-      - "8025:8025"
-      - "1025:1025"
-    networks:
-      - signalvision_network
-
 # =============================================================================
 # NETWORKS
 # =============================================================================
