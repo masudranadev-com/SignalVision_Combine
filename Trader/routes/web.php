@@ -19,7 +19,7 @@ Route::get('instruments-price', [CryptoPrice::class, 'instrumentsPrice']);
 Route::get('instruments-info', [CryptoPrice::class, 'instrumentsInfo']);
 
 
-Route::get('/', function () {
+Route::get('/info', function () {
       echo "SignalShot";
 });
 

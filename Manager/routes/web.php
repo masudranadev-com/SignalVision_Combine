@@ -17,6 +17,11 @@ use App\Models\ScheduleCrypto;
 use App\Jobs\ScheduleNotificationJob;
 use \App\Http\Controllers\BybitAPIController;
 
+
+Route::get('/info', function () {
+      echo "SignalManager";
+});
+
 Route::get('/send-message', function () {
     // $data = [
     //     'id' => 1,

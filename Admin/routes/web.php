@@ -11,6 +11,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/info', function () {
+      echo "SignalAdmin";
+});
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
